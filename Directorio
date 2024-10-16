@@ -74,8 +74,15 @@ class Directorio:
         self.contactos = Lista()
 
     def agregar_contacto(self, contacto):
-        # Verificar si el contacto ya existe en el directorio
-        if not self.contactos.contiene(contacto):  # Usando el método 'contiene' de la lista ligada
+        # Buscar si ya existe un contacto con el mismo nombre y apellidos
+        existe = False
+        for c in self.contactos:
+            if c.nombre == contacto.nombre and c.apellidos == contacto.apellidos:
+                existe = True
+                break
+
+        # Agregar el contacto si no existe
+        if not existe:
             self.contactos.agregar(contacto)
         else:
             print(f"El contacto {contacto.nombre} {contacto.apellidos} ya existe en el directorio.")

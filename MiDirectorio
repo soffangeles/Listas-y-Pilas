@@ -103,74 +103,30 @@ if __name__ == "__main__":
                 else:
                     print("Contacto no encontrado.")
 
-
             elif opcion == "2":
-
-                #Validación de tipo de contacto.
-                intentos = 0  # Inicializar el contador de intentos
+                # Validación de tipo de contacto.
                 while True:
                     tipo = input("Tipo de contacto (Alumno/Profesor/Coordinador): ").capitalize()
                     if tipo in ("Alumno", "Profesor", "Coordinador"):
                         break  # Salir del bucle si el tipo es válido
                     else:
                         print("Tipo de contacto inválido. Inténtalo de nuevo.")
-                        intentos += 1
-                        if intentos == 3:
-                            while True:
-                                opcion = input("¿Deseas continuar intentando (s/n)? ")
-                                if opcion.lower() == 's':
-                                    intentos = 0  # Reiniciar el contador si el usuario continúa
-                                    break  # Salir del bucle interno
-                                elif opcion.lower() == 'n':
-                                    break  # Salir del bucle principal (volver al menú)
-                                else:
-                                    print("Opción inválida. Inténtalo de nuevo.")
-                            if opcion.lower() == 'n':
-                                break  # Salir del bucle principal (volver al menú)
 
                 # El usuario debe introducir el nombre(s) del contacto a añadir
-                intentos = 0  # Inicializar el contador de intentos
                 while True:
                     nombre = input("Nombre(s): ")
                     if nombre.replace(" ", "").isalpha():  # Verificar si solo contiene letras y espacios
                         break  # Salir del bucle si es válido
                     else:
                         print("Nombre inválido. Solo se permiten letras y espacios.")
-                        intentos += 1
-                        if intentos == 3:
-                            while True:
-                                opcion = input("¿Deseas continuar intentando (s/n)? ")
-                                if opcion.lower() == 's':
-                                    intentos = 0  # Reiniciar el contador si el usuario continúa
-                                    break  # Salir del bucle interno
-                                elif opcion.lower() == 'n':
-                                    break  # Salir del bucle principal (volver al menú)
-                                else:
-                                    print("Opción inválida. Inténtalo de nuevo.")
-                            if opcion.lower() == 'n':
-                                break  # Salir del bucle principal (volver al menú)
 
-                #El usuario debe introducir los apellidos del contacto a añadir
-                intentos = 0  # Inicializar el contador de intentos
+                # El usuario debe introducir los apellidos del contacto a añadir
                 while True:
                     apellidos = input("Apellidos: ")
                     if apellidos.replace(" ", "").isalpha():  # Verificar si solo contiene letras y espacios
                         break  # Salir del bucle si es válido
                     else:
                         print("Apellidos inválidos. Solo se permiten letras y espacios.")
-                        intentos += 1
-                        if intentos == 3:
-                            while True:
-                                opcion = input("¿Deseas continuar intentando (s/n)? ")
-                                if opcion.lower() == 's':
-                                    intentos = 0  # Reiniciar el contador si el usuario continúa
-                                    break  # Salir del bucle interno
-                                elif opcion.lower() == 'n':
-                                    break  # Salir del bucle principal (volver al menú)
-                                else:
-                                    print("Opción inválida. Inténtalo de nuevo.")
-                            if opcion.lower() == 'n':
-                                break  # Salir del bucle principal (volver al menú)
 
                 while True:
                     try:
@@ -181,29 +137,14 @@ if __name__ == "__main__":
                         print("Formato de fecha incorrecto. Inténtalo de nuevo (dd/mm/yyyy).")
 
                 # El usuario debe introducir el correo electrónico del contacto a añadir
-                intentos = 0  # Inicializar el contador de intentos
                 while True:
                     email = input("Email: ")
                     if validate_email(email):  # Usar validate_email para verificar el formato
                         break  # Salir del bucle si el formato es válido
                     else:
                         print("Formato de correo inválido. Inténtalo de nuevo.")
-                        intentos += 1
-                        if intentos == 3:
-                            while True:
-                                opcion = input("¿Deseas continuar intentando (s/n)? ")
-                                if opcion.lower() == 's':
-                                    intentos = 0  # Reiniciar el contador si el usuario continúa
-                                    break  # Salir del bucle interno
-                                elif opcion.lower() == 'n':
-                                    break  # Salir del bucle principal (volver al menú)
-                                else:
-                                    print("Opción inválida. Inténtalo de nuevo.")
-                            if opcion.lower() == 'n':
-                                break  # Salir del bucle principal (volver al menú)
 
                 # El usuario debe introducir el celular del contacto a añadir
-                intentos = 0  # Inicializar el contador de intentos
                 while True:
                     try:
                         celular = int(input("Celular: "))
@@ -212,149 +153,88 @@ if __name__ == "__main__":
                         print("Celular debe ser un número. Inténtalo de nuevo.")
                     except ValueError:
                         print("Celular debe ser un número entero. Inténtalo de nuevo.")
-                        intentos += 1
-                        if intentos == 3:
-                            while True:
-                                opcion = input("¿Deseas continuar intentando (s/n)? ")
-                                intentos += 1
-                                if intentos == 3:
-                                    while True:
-                                        opcion = input("¿Deseas continuar intentando (s/n)? ")
-                                        if opcion.lower() == 's':
-                                            intentos = 0  # Reiniciar contador si continúa
-                                            break  # Salir del bucle interno
-                                        elif opcion.lower() == 'n':
-                                            break  # Salir del bucle principal (volver al menú)
-                                        else:
-                                            print("Opción inválida. Inténtalo de nuevo.")
-                                    if opcion.lower() == 'n':
-                                        break  # Salir del bucle principal (volver al menú)
 
                 # El usuario debe introducir la carrera del contacto a añadir
-                intentos = 0  # Inicializar el contador de intentos
                 while True:
                     carrera = input("Carrera: ")
                     if carrera.replace(" ", "").isalpha():  # Verificar si solo contiene letras y espacios
                         break  # Salir del bucle si es válido
                     else:
                         print("Carrera inválida. Solo se permiten letras y espacios.")
-                        intentos += 1
-                        if intentos == 3:
-                            while True:
-                                opcion = input("¿Deseas continuar intentando (s/n)? ")
-                                if opcion.lower() == 's':
-                                    intentos = 0  # Reiniciar el contador si el usuario continúa
-                                    break  # Salir del bucle interno
-                                elif opcion.lower() == 'n':
-                                    break  # Salir del bucle principal (volver al menú)
-                                else:
-                                    print("Opción inválida. Inténtalo de nuevo.")
-                            if opcion.lower() == 'n':
-                                break  # Salir del bucle principal (volver al menú)
 
                 if tipo == "Alumno":
-                    # El usuario debe introducir el número de cuenta del contacto a añadir
-                    intentos = 0  # Inicializar contador de intentos para num_cuenta
-                    num_cuenta = None
-
-                    while True:  # Bucle para validar la entrada del número de cuenta
+                    while True:
                         try:
                             num_cuenta = int(input("Número de cuenta: "))
-                            break  # Salir del bucle si la entrada es un entero válido
+                            break
                         except ValueError:
-                            print("Entrada inválida. Debes introducir un número entero para el número de cuenta.")
-                            intentos += 1
-                            if intentos == 3:
-                                while True:
-                                    opcion = input("¿Deseas continuar intentando (s/n)? ")
-                                    if opcion.lower() == 's':
-                                        intentos = 0  # Reiniciar contador si continúa
-                                        break  # Salir del bucle interno
-                                    elif opcion.lower() == 'n':
-                                        break  # Salir del bucle principal (volver al menú)
-                                    else:
-                                        print("Opción inválida. Inténtalo de nuevo.")
-                                if opcion.lower() == 'n':
-                                    break  # Salir del bucle principal (volver al menú)
-
-                    # El usuario debe introducir el semestre inscrito del contacto a añadir
-                    intentos = 0  # Inicializar el contador de intentos
-                    semestre = None
-                    while True:  # Bucle para validar la entrada del semestre
+                            print("Número de cuenta inválido. Debe ser un número entero.")
+                    while True:
                         try:
                             semestre = int(input("Semestre: "))
-                            break  # Salir del bucle si la entrada es un entero válido
+                            break
                         except ValueError:
-                            print("Entrada inválida. Debes introducir un número entero para el semestre.")
-                            intentos += 1
-                            if intentos == 3:
-                                while True:
-                                    opcion = input("¿Deseas continuar intentando (s/n)? ")
-                                    if opcion.lower() == 's':
-                                        intentos = 0  # Reiniciar contador si continúa
-                                        break  # Salir del bucle interno
-                                    elif opcion.lower() == 'n':
-                                        break  # Salir del bucle principal (volver al menú)
-                                    else:
-                                        print("Opción inválida. Inténtalo de nuevo.")
-                                if opcion.lower() == 'n':
-                                    break  # Salir del bucle principal (volver al menú)
-
-                    # El usuario debe introducir las materias inscritas del contacto a añadir
-                    intentos = 0  # Inicializar el contador de intentos
-                    while True:
-                        materias = input("Materias: ")
-                        if carrera.replace(" ", "").isalpha():  # Verificar si solo contiene letras y espacios
-                            break  # Salir del bucle si es válido
-                        else:
-                            print("Materias inválidas. Solo se permiten letras y espacios.")
-                            intentos += 1
-                            if intentos == 3:
-                                while True:
-                                    opcion = input("¿Deseas continuar intentando (s/n)? ")
-                                    if opcion.lower() == 's':
-                                        intentos = 0  # Reiniciar el contador si el usuario continúa
-                                        break  # Salir del bucle interno
-                                    elif opcion.lower() == 'n':
-                                        break  # Salir del bucle principal (volver al menú)
-                                    else:
-                                        print("Opción inválida. Inténtalo de nuevo.")
-                                if opcion.lower() == 'n':
-                                    break  # Salir del bucle principal (volver al menú)
-
-                                # Verificar si num_cuenta y semestre están definidos antes de crear el objeto Alumno
-                                if num_cuenta is not None and semestre is not None:
-                                    contacto = Alumno(nombre, apellidos, nacimiento, email, celular, carrera, num_cuenta, semestre,
-                                                      materias)
-                                else:
-                                    # Manejar el caso donde num_cuenta o semestre no están definidos (usuario eligió 'n')
-                                    print("No se pudo agregar el contacto. Regresando al menú principal.")
-                                    continue  # Volver al menú principal
-
+                            print("Semestre inválido. Debe ser un número entero.")
+                    materias = input("Materias: ")
+                    contacto = Alumno(nombre, apellidos, nacimiento, email, celular, carrera, num_cuenta, semestre,
+                                      materias)
 
                 elif tipo == "Profesor":
-                    num_profesor = int(input("Número de profesor: "))
+                    while True:
+                        try:
+                            num_profesor = int(input("Número de profesor: "))
+                            break
+                        except ValueError:
+                            print("Número de profesor inválido. Debe ser un número entero.")
                     departamento = input("Departamento: ")
-                    salario = float(input("Salario: "))
-                    oficina = int(input("Télefono de oficina: "))
-                    grupos = int(input("Grupos: "))
-
-                    contacto = Profesor(nombre, apellidos, nacimiento, email, celular, carrera,
-                                        num_profesor, departamento, salario, oficina, grupos)
-
-
+                    while True:
+                        try:
+                            salario = float(input("Salario: "))
+                            break
+                        except ValueError:
+                            print("Salario inválido. Debe ser un número.")
+                    while True:
+                        try:
+                            oficina = int(input("Teléfono de oficina: "))
+                            break
+                        except ValueError:
+                            print("Teléfono de oficina inválido. Debe ser un número entero.")
+                    grupos = input("Grupos: ")
+                    contacto = Profesor(nombre, apellidos, nacimiento, email, celular, carrera, num_profesor,
+                                        departamento, salario,
+                                        oficina, grupos)
 
                 elif tipo == "Coordinador":
-                    num_coordinador = int(input("Número de coordinador: "))
+                    while True:
+                        try:
+                            num_coordinador = int(input("Número de coordinador: "))
+                            break
+                        except ValueError:
+                            print("Número de coordinador inválido. Debe ser un número entero.")
                     departamento = input("Departamento: ")
-                    extension = int(input("Extensión: "))
-                    salario = float(input("Salario: "))
+                    while True:
+                        try:
+                            extension = int(input("Extensión: "))
+                            break
+                        except ValueError:
+                            print("Extensión inválida. Debe ser un número entero.")
+                    while True:
+                        try:
+                            salario = float(input("Salario: "))
+                            break
+                        except ValueError:
+                            print("Salario inválido. Debe ser un número.")
                     contacto = Coordinador(nombre, apellidos, nacimiento, email, celular, carrera, num_coordinador,
-                                           departamento, extension, salario)
-
+                                           departamento,
+                                           extension, salario)
                 else:
                     print("Tipo de contacto no válido.")
-                    continue
+                    continue  # Salir del bucle actual y volver al inicio del while True
+
+                # Agregar el contacto al Directorio (Asegurarse de que 'directorio' sea accesible)
+                directorio.agregar_contacto(contacto)
+                print("Contacto agregado exitosamente.")
+
 
             elif opcion == "3":
 
@@ -614,14 +494,12 @@ if __name__ == "__main__":
             elif opcion == "17":
                 directorio.vaciar_directorio()
 
-            elif opcion == "18":
-                print("Saliendo del programa. ¡Hasta luego! :D.")
-                break
+            if opcion == "18":
+                # Guardar los datos automáticamente en el archivo "contactos.csv"
+                directorio.guardar_archivo("contactos.csv")
+                print("Datos guardados automáticamente en contactos.csv")
 
-            else:
-                print("Opción no válida. Intenta de nuevo.")
-
-
+            # Preguntar al usuario si desea volver al menú principal o salir
             while True:
                 volver_al_menu = input("¿Desea volver al menú principal? (s/n): ")
                 if volver_al_menu.lower() in ('s', 'n'):
@@ -631,12 +509,7 @@ if __name__ == "__main__":
 
             if volver_al_menu.lower() == 'n':
                 print("Saliendo del programa. ¡Hasta luego! :D")
-                exit()
+                break  # Salir del bucle principal
 
-    finally:
-        if archivo_leido is None:
-            archivo_guardar = input("Introduce el nombre del archivo para guardar los datos: ")
-            directorio.guardar_archivo(archivo_guardar)
-        else:
-            directorio.guardar_archivo(archivo_leido)
-        print("Cambios guardados.")
+    except Exception as e:
+        print(f"Ocurrió un error: {e}")

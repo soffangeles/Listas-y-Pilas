@@ -1,0 +1,331 @@
+import csv
+import math
+from ListaContactos import *
+from datetime import datetime
+
+def merge(izquierda, derecha):
+    resultado = []
+    i = j = 0
+
+    while i < len(izquierda) and j < len(derecha):
+        if (izquierda[i].nombre, izquierda[i].apellidos) <= (derecha[j].nombre, derecha[j].apellidos):
+            resultado.append(izquierda[i])
+            i += 1
+        else:
+            resultado.append(derecha[j])
+            j += 1
+
+    resultado += izquierda[i:]
+    resultado += derecha[j:]
+
+    return resultado
+
+def crear_contacto(fila):
+    """
+    Crea un objeto de contacto (Alumno, Profesor o Coordinador) a partir de los datos de una fila del archivo CSV.
+
+    Args:
+        fila (list): Una lista que contiene los datos de una fila del archivo CSV.
+
+    Returns:
+        Alumno | Profesor | Coordinador: El objeto de contacto creado, o None si el tipo de contacto no es válido.
+    """
+    try:
+        tipo = fila[0].capitalize()
+        nombre = fila[1]
+        apellidos = fila[2]
+        nacimiento = datetime.strptime(fila[3], "%d/%m/%Y").date()
+        email = fila[4]
+        celular = int(fila[5]) if fila[5] else 0
+        carrera = fila[6]
+        num_cuenta = int(fila[7]) if fila[7] else None
+        semestre = int(fila[8]) if fila[8] else None
+        materias = fila[9]
+        num_profesor = int(fila[10]) if fila[10] else None
+        salario = float(fila[11]) if fila[11] else None
+        oficina = int(fila[12]) if fila[12] else None
+        grupos = fila[13]
+        departamento = fila[14]
+        num_coordinador = int(fila[15]) if fila[15] else None
+        extension = int(fila[16]) if fila[16] else None
+
+        if tipo == "Alumno":
+            contacto = Alumno(nombre, apellidos, nacimiento, email, celular, carrera, num_cuenta, semestre,
+                              materias)
+        elif tipo == "Profesor":
+            contacto = Profesor(nombre, apellidos, nacimiento, email, celular, carrera, num_profesor, departamento,
+                                salario, oficina, grupos)
+        elif tipo == "Coordinador":
+            contacto = Coordinador(nombre, apellidos, nacimiento, email, celular, carrera, num_coordinador,
+                                   departamento, extension, salario)
+        else:
+            print(f"Tipo de contacto no válido: {tipo}")
+            return None  # Devolver None si el tipo no es válido
+
+        return contacto
+
+    except (ValueError, IndexError) as e:
+        print(f"Error al procesar la fila: {fila}")
+        print(f"Error: {e}")
+        return None  # Devolver None en caso de error
+
+class Directorio:
+    def __init__(self):
+        self.contactos = Lista()
+
+    def agregar_contacto(self, contacto):
+        # Verificar si el contacto ya existe en el directorio
+        if not self.contactos.contiene(contacto):  # Usando el método 'contiene' de la lista ligada
+            self.contactos.agregar(contacto)
+        else:
+            print(f"El contacto {contacto.nombre} {contacto.apellidos} ya existe en el directorio.")
+
+    def eliminar_contacto(self, nombre, apellidos):
+        for contacto in self.contactos:  # Recorre la lista simplemente ligada
+            if contacto.nombre == nombre and contacto.apellidos == apellidos:
+                self.contactos.eliminar(contacto)  # Asegúrate que 'eliminar' funciona con listas simplemente ligadas
+                return True
+        return False
+
+    def buscar_contacto(self, nombre, apellidos):
+        for contacto in self.contactos:  # Recorre la lista simplemente ligada
+            if contacto.nombre == nombre and contacto.apellidos == apellidos:
+                return contacto
+        return None
+
+    def actualizar_contacto(self, nombre, apellidos, nuevo_contacto):
+        """Actualiza un contacto existente con nuevos datos."""
+
+        # Buscar el contacto a actualizar
+        contacto_a_actualizar = self.buscar_contacto(nombre, apellidos)
+
+        # Si se encuentra el contacto, actualizarlo
+        if contacto_a_actualizar:
+            # Reemplazar el contacto original con el nuevo contacto en la lista
+            self.contactos.sustituir(contacto_a_actualizar,
+                                     nuevo_contacto)  # Asegúrate que 'sustituir' funciona con listas simplemente ligadas
+            return True
+        else:
+            return False  # No se encontró el contacto
+
+    def ordenar_contactos(self, contactos):
+        """
+        Ordena la lista implementando el algoritmo Merge Sort.
+
+        Args:
+            contactos (lista): Lista de objetos Contacto a ordenar.
+
+        Returns:
+            lista: Lista de contactos ordenada alfabéticamente por nombre y apellidos.
+        """
+        if len(contactos) <= 1:
+            return contactos
+
+        mitad = len(contactos) // 2
+        izquierda = contactos[:mitad]
+        derecha = contactos[mitad:]
+
+        izquierda = self.ordenar_contactos(izquierda)
+        derecha = self.ordenar_contactos(derecha)
+
+        return merge(izquierda, derecha)
+
+    def listar_contactos(self):
+        contactos = []
+        actual = self.contactos.inicio
+        while actual is not None:
+            contactos.append(actual.elemento)
+            actual = actual.siguiente
+        return self.ordenar_contactos(contactos)
+
+    def listar_por_tipo(self, tipo):
+        contactos = []
+        actual = self.contactos.inicio
+        while actual is not None:
+            if isinstance(actual.elemento, tipo):
+                contactos.append(actual.elemento)
+            actual = actual.siguiente
+        return self.ordenar_contactos(contactos)
+
+    def buscar_por_salario(self, salario):
+        resultados = Lista()
+        for contacto in self.contactos:
+            if isinstance(contacto, (Profesor, Coordinador)) and math.isclose(contacto.salario, salario,
+                                                                              rel_tol=1e-09, abs_tol=0.0):
+                resultados.agregar(contacto)
+        return resultados
+
+    def buscar_por_numero(self, tipo, numero):
+        for contacto in self.contactos:  # Recorre la lista simplemente ligada
+            if isinstance(contacto, tipo):
+                if (tipo == Alumno and contacto.num_cuenta == numero) or \
+                        (tipo == Profesor and contacto.num_profesor == numero) or \
+                        (tipo == Coordinador and contacto.num_coordinador == numero):
+                    return contacto
+        return None
+
+    def buscar_por_celular(self, celular):
+        for contacto in self.contactos:  # Recorre la lista simplemente ligada
+            if contacto and contacto.celular == int(celular):
+                return contacto
+        return None
+
+    def buscar_contacto_nombre_apellidos_tipo(self, nombre, apellidos, tipo):
+        """Busca un contacto por nombre completo y tipo."""
+
+        # Verificar si el tipo de contacto es válido
+        tipos_validos = {"Alumno": Alumno, "Profesor": Profesor, "Coordinador": Coordinador}
+        if tipo not in tipos_validos:
+            print("Tipo de contacto no válido.")
+            return None  # Devolver None si el tipo es inválido
+
+        # Buscar el contacto
+        for contacto in self.contactos:  # Iterar sobre los contactos en el directorio
+            if contacto.nombre == nombre and contacto.apellidos == apellidos and isinstance(contacto,
+                                                                                            tipos_validos[tipo]):
+                return contacto  # Devolver el contacto si se encuentra
+
+        return None  # Devolver None si el contacto no se encuentra
+
+    def listar_contactos_email(self):
+        alumnos = Lista()
+        profesores = Lista()
+        coordinadores = Lista()
+
+        for contacto in self.contactos:
+            if isinstance(contacto, Alumno):
+                alumnos.agregar(contacto)
+            elif isinstance(contacto, Profesor):
+                profesores.agregar(contacto)
+            elif isinstance(contacto, Coordinador):
+                coordinadores.agregar(contacto)
+
+        # Ordenar las listas usando la función ordenar_contactos
+        alumnos_ordenados = self.ordenar_contactos(list(alumnos))
+        profesores_ordenados = self.ordenar_contactos(list(profesores))
+        coordinadores_ordenados = self.ordenar_contactos(list(coordinadores))
+
+        if alumnos_ordenados:
+            print("Alumnos:")
+            for alumno in alumnos_ordenados:
+                print(alumno)
+
+        if profesores_ordenados:
+            print("\nProfesores:")
+            for profesor in profesores_ordenados:
+                print(profesor)
+
+        if coordinadores_ordenados:
+            print("\nCoordinadores:")
+            for coordinador in coordinadores_ordenados:
+                print(coordinador)
+
+        if not alumnos_ordenados and not profesores_ordenados and not coordinadores_ordenados:
+            print("No hay contactos en el directorio.")
+
+    def listar_contactos_por_carrera(self, carrera):
+        """Lista los contactos por carrera, utilizando listas ligadas."""
+
+        alumnos = Lista()
+        profesores = Lista()
+        coordinadores = Lista()
+
+        for contacto in self.contactos:
+            if contacto.carrera == carrera:  # Filtrar por carrera
+                if isinstance(contacto, Alumno):
+                    alumnos.agregar(contacto)
+                elif isinstance(contacto, Profesor):
+                    profesores.agregar(contacto)
+                elif isinstance(contacto, Coordinador):
+                    coordinadores.agregar(contacto)
+
+        # Imprimir los contactos de cada tipo, si los hay
+        if not alumnos.esta_vacia():
+            print("Alumnos:")
+            for alumno in alumnos:
+                print(alumno)
+
+        if not profesores.esta_vacia():
+            print("\nProfesores:")
+            for profesor in profesores:
+                print(profesor)
+
+        if not coordinadores.esta_vacia():
+            print("\nCoordinadores:")
+            for coordinador in coordinadores:
+                print(coordinador)
+
+        if alumnos.esta_vacia() and profesores.esta_vacia() and coordinadores.esta_vacia():
+            print("No hay contactos de esa carrera en el directorio.")
+
+    def eliminar_por_celular(self, celular):
+        for contacto in self.contactos:  # Recorre la lista simplemente ligada
+            if contacto and contacto.celular == celular:
+                self.contactos.eliminar(contacto)  # Asegúrate que 'eliminar' funciona con listas simplemente ligadas
+                return True
+        return False
+
+    def eliminar_por_numero(self, tipo, numero):
+        for contacto in self.contactos:  # Recorre la lista simplemente ligada
+            if contacto and isinstance(contacto, tipo) and (
+                    (tipo == Alumno and contacto.num_cuenta == numero) or
+                    (tipo == Profesor and contacto.num_profesor == numero) or
+                    (tipo == Coordinador and contacto.num_coordinador == numero)
+            ):
+                self.contactos.eliminar(contacto)  # Asegúrate que 'eliminar' funciona con listas simplemente ligadas
+
+    def vaciar_directorio(self):
+        self.contactos.vaciar()
+        print("El directorio se ha vaciado.")
+
+    def leer_archivo(self, archivo_csv):
+        """
+        Lee un archivo CSV y agrega los contactos al directorio.
+        """
+        try:
+            with open(archivo_csv, newline='', encoding='utf-8') as csvfile:
+                lector = csv.reader(csvfile)
+                next(lector)  # Saltar la primera fila si contiene encabezados
+                for fila in lector:
+                    contacto = crear_contacto(fila)  # Llamar a la función externa
+                    if contacto:  # Agregar solo si se creó un contacto válido
+                        self.agregar_contacto(contacto)
+                        print(f"Contacto agregado: {contacto}")
+
+        except FileNotFoundError:
+            print(f"Error: No se encontró el archivo {archivo_csv}")
+
+
+    def guardar_archivo(self, archivo_csv):
+        contactos = self.listar_contactos()
+        if not archivo_csv.endswith(".csv"):
+            archivo_csv += ".csv"
+        with open(archivo_csv, mode='w', newline='', encoding='utf-8') as csvfile:
+            escritor = csv.writer(csvfile)
+
+            # Agregar la fila de encabezados
+            encabezados = ["Tipo", "Nombre", "Apellidos", "Nacimiento", "Email", "Celular",
+                           "Carrera", "Num_Cuenta", "Semestre", "Materias", "Num_Profesor",
+                           "Departamento", "Salario", "Oficina", "Grupos", "Num_Coordinador",
+                           "Extension"]
+            escritor.writerow(encabezados)
+
+            for contacto in contactos:
+                if isinstance(contacto, Alumno):
+                    escritor.writerow(
+                        ["Alumno", contacto.nombre, contacto.apellidos, contacto.nacimiento.strftime("%d/%m/%Y"),
+                         contacto.email, contacto.celular, contacto.carrera, contacto.num_cuenta, contacto.semestre,
+                         contacto.materias, "", "", "", "", "", "", ""]
+                    )
+                elif isinstance(contacto, Profesor):
+                    fila = ["Profesor", contacto.nombre, contacto.apellidos, contacto.nacimiento.strftime("%d/%m/%Y"),
+                            contacto.email, contacto.celular, contacto.carrera, "", "", "", contacto.num_profesor,
+                            contacto.departamento, contacto.salario, contacto.oficina, contacto.grupos, "", ""]
+                    escritor.writerow(fila)
+                elif isinstance(contacto, Coordinador):
+                    fila = ["Coordinador", contacto.nombre, contacto.apellidos,
+                            contacto.nacimiento.strftime("%d/%m/%Y"),
+                            contacto.email, contacto.celular, contacto.carrera, "", "", "", "",
+                            contacto.departamento, contacto.salario, "", "", contacto.extension]
+                    escritor.writerow(fila)
+

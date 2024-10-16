@@ -1,0 +1,76 @@
+from Persona import *
+
+class Alumno(Persona):
+    def __init__(self, nombre: str, apellidos: str, nacimiento: date, email: str, celular: int, carrera: str,
+                 num_cuenta: int, semestre: int, materias: str):
+        """
+        Constructor para un Empleado, además de los datos de una Persona, recibe el número de empleado
+        y el salario.
+        :param nombre: El nombre del Alumno
+        :param apellidos: Los apellidos del Alumno
+        :param nacimiento: La fecha de nacimiento del Alumno
+        :param email: EL correo electrónico del Alumno
+        :param celular: El número del celular del Alumno
+        :param carrera: La carrera que está cursando el Alumno
+        :param num_cuenta: El número de Alumno
+        :param semestre: El semestre al que está inscrito el Alumno
+        :param materias: Las materias que está cursando el Alumno
+        """
+        super().__init__(nombre, apellidos, nacimiento, email, celular, carrera)
+        self.num_cuenta = num_cuenta
+        self.semestre = semestre
+        self.materias = materias
+
+    def __str__(self):
+        return super().__str__() + (f" | Número de cuenta: {self.num_cuenta} | Semestre: {self.semestre} "
+                                    f"| Materias: {self.materias}")
+
+class Empleado(Persona):
+    def __init__(self, nombre: str, apellidos: str, nacimiento: date, email: str, celular: int, carrera: str,
+                 departamento: str, salario: float):
+        """
+        Constructor para un Empleado, además de los datos de una Persona, recibe el número de empleado
+        y el salario.
+        :param nombre: El nombre del Empleado
+        :param apellidos: Los apellidos del Empleado
+        :param nacimiento: La fecha de nacimiento del Empleado
+        :param email: EL correo electrónico del Empleado
+        :param celular: El número del celular del Empleado
+        :param carrera: La carrera a la que imparte materias o coordina el Empleado
+        :param departamento: El departamento de adscripción del Empleado
+        :param salario: El salario del Empleado
+        """
+
+        super().__init__(nombre, apellidos, nacimiento, email, celular, carrera)
+        self.departamento = departamento
+        self.salario = salario
+
+    # Métodos calculadores
+    def __str__(self):
+        return super().__str__() + (f" | Departamento: {self.departamento}"
+                                    f"| Salario: {self.salario}")
+
+class Profesor(Empleado):
+    def __init__(self, nombre, apellidos, nacimiento, email, celular, carrera, num_profesor, departamento, salario,
+                 oficina, grupos):
+        super().__init__(nombre, apellidos, nacimiento, email, celular, carrera, departamento, salario)
+        self.num_profesor = num_profesor
+        self.oficina = oficina
+        self.grupos = grupos
+
+    def __str__(self):
+        return super().__str__() + (f" | Número de profesor: {self.num_profesor} "
+                                    f"| Télefono de oficina: {self.oficina} "
+                                    f"| Grupos: {self.grupos}")
+
+
+class Coordinador(Empleado):
+    def __init__(self, nombre, apellidos, nacimiento, email, celular, carrera, num_coordinador, departamento,
+                 extension, salario):
+        super().__init__(nombre, apellidos, nacimiento, email, celular, carrera, departamento, salario)
+        self.num_coordinador = num_coordinador
+        self.extension = extension
+
+    def __str__(self):
+        return super().__str__() + (f" | Número de coordinador: {self.num_coordinador} "
+                                    f" | Extensión: {self.extension} |")

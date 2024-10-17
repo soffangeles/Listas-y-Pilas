@@ -1,0 +1,507 @@
+from Directorio import *
+
+if __name__ == "__main__":
+    print("Bienvenido a su Directorio :D")
+    directorio = Directorio()
+    archivo_leido = None  # Inicializar como None
+
+    while True:
+        opcion_inicio = input("¿Desea iniciar con el directorio en blanco o leer desde un archivo? (b/a): ").lower()
+        if opcion_inicio in ("b", "a"):
+            break
+        else:
+            print("Opción inválida. Introduce 'b' para iniciar en blanco o 'a' para leer desde un archivo.")
+
+    if opcion_inicio == "a":
+        while True:
+            archivo_csv = input("Introduce el nombre del archivo CSV a leer: ")
+            try:
+                directorio.leer_archivo(archivo_csv)
+                print(f"Contactos leídos desde el archivo: {archivo_csv}")
+                archivo_leido = archivo_csv  # Actualizar archivo_leido
+                break
+            except FileNotFoundError:
+                print(f"Error: No se encontró el archivo {archivo_csv}. Intenta de nuevo.")
+
+    try:
+        while True:
+            print("\nMenú del Directorio")
+            print("1. Actualizar contacto.")
+            print("2. Agregar contacto.")
+            print("3. Buscar contacto por nombre completo.")
+            print("4. Buscar contactor por nombre completo y tipo.")
+            print("5. Buscar contacto por numero celular.")
+            print("6. Buscar contacto por numero de cuenta, de profesor o de coordinador.")
+            print("7. Eliminar contacto por nombre completo.")
+            print("8. Eliminar contacto por numero celular.")
+            print("9. Eliminar contacto por numero de cuenta, de profesor o de coordinador.")
+            print("10. Leer contactos desde archivo CSV.")
+            print("11. Listar todos los contactos.")
+            print("12. Listar todos los contactos con correo electrónico.")
+            print("13. Listar todos los contactos por carrera.")
+            print("14. Listar contactos por salario.")
+            print("15. Listar contactos por tipo.")
+            print("16. Guardar contactos en archivo CSV.")
+            print("17. Vaciar el directorio.")
+            print("18. Salir.")
+
+
+            opcion = input("Elige una opción: ")
+
+            if opcion == "1":
+
+                # Verificar si hay contactos en el directorio
+                if directorio.contactos.esta_vacia():  # Usar esta_vacia() de la lista ligada
+                    print("No hay contactos en el directorio. Agrega contactos primero.")
+                    continue  # Volver al menú principal
+
+                nombre = input("Nombre(s) del contacto a actualizar: ")
+                apellidos = input("Apellidos del contacto a actualizar: ")
+
+                contacto = directorio.buscar_contacto(nombre, apellidos)
+                if not contacto:
+                    print("Contacto no encontrado.")
+                    continue
+
+                tipo = input("Nuevo tipo de contacto (Alumno/Profesor/Coordinador): ")
+                nuevo_nombre = input("Nuevo(s) nombre(s): ")
+                nuevos_apellidos = input("Nuevos apellidos: ")
+                nuevo_nacimiento = datetime.strptime(input("Nueva fecha de nacimiento (dd/mm/yyyy): "), "%d/%m/%Y").date()
+                nuevo_email = input("Nuevo email: ")
+                nuevo_celular = int(input("Nuevo celular: "))
+                nueva_carrera = input("Nueva carrera: ")
+
+                if tipo == "Alumno":
+                    nuevo_num_cuenta = int(input("Nuevo número de cuenta: "))
+                    nuevo_semestre = int(input("Nuevo semestre: "))
+                    nuevas_materias = input("Nuevas materias: ")
+                    nuevo_contacto = Alumno(nuevo_nombre, nuevos_apellidos, nuevo_nacimiento, nuevo_email, nuevo_celular,
+                                            nueva_carrera, nuevo_num_cuenta, nuevo_semestre, nuevas_materias)
+                elif tipo == "Profesor":
+                    nuevo_num_profesor = int(input("Nuevo número de profesor: "))
+                    nuevo_departamento = input("Nuevo departamento: ")
+                    nuevo_salario = float(input("Nuevo salario: "))
+                    nuevo_oficina = int(input("Nuevo télefono de oficina: "))
+                    nuevos_grupos = input("Nuevos grupos: ")
+                    nuevo_contacto = Profesor(nuevo_nombre, nuevos_apellidos, nuevo_nacimiento, nuevo_email, nuevo_celular,
+                                              nueva_carrera, nuevo_num_profesor, nuevo_departamento, nuevo_salario,
+                                              nuevo_oficina, nuevos_grupos)
+                elif tipo == "Coordinador":
+                    nuevo_num_coordinador = int(input("Nuevo número de coordinador: "))
+                    nuevo_departamento = input("Nuevo departamento: ")
+                    nueva_extension = int(input("Nueva extensión: "))
+                    nuevo_salario = float(input("Nuevo salario: "))
+                    nuevo_contacto = Coordinador(nuevo_nombre, nuevos_apellidos, nuevo_nacimiento, nuevo_email,
+                                                 nuevo_celular, nueva_carrera, nuevo_num_coordinador, nuevo_departamento,
+                                                 nueva_extension, nuevo_salario)
+                else:
+                    print("Tipo de contacto no válido.")
+                    continue
+
+                if directorio.actualizar_contacto(nombre, apellidos, nuevo_contacto):
+                    print("Contacto actualizado exitosamente.")
+                else:
+                    print("Contacto no encontrado.")
+
+            elif opcion == "2":
+                # Validación de tipo de contacto.
+                while True:
+                    tipo = input("Tipo de contacto (Alumno/Profesor/Coordinador): ").capitalize()
+                    if tipo in ("Alumno", "Profesor", "Coordinador"):
+                        break  # Salir del bucle si el tipo es válido
+                    else:
+                        print("Tipo de contacto inválido. Inténtalo de nuevo.")
+
+                # El usuario debe introducir el nombre(s) del contacto a añadir
+                while True:
+                    nombre = input("Nombre(s): ")
+                    if nombre.replace(" ", "").isalpha():  # Verificar si solo contiene letras y espacios
+                        break  # Salir del bucle si es válido
+                    else:
+                        print("Nombre inválido. Solo se permiten letras y espacios.")
+
+                # El usuario debe introducir los apellidos del contacto a añadir
+                while True:
+                    apellidos = input("Apellidos: ")
+                    if apellidos.replace(" ", "").isalpha():  # Verificar si solo contiene letras y espacios
+                        break  # Salir del bucle si es válido
+                    else:
+                        print("Apellidos inválidos. Solo se permiten letras y espacios.")
+
+                while True:
+                    try:
+                        nacimiento_str = input("Fecha de nacimiento (dd/mm/yyyy): ")
+                        nacimiento = datetime.strptime(nacimiento_str, "%d/%m/%Y").date()
+                        break  # Salir del bucle si la conversión es exitosa
+                    except ValueError:
+                        print("Formato de fecha incorrecto. Inténtalo de nuevo (dd/mm/yyyy).")
+
+                # El usuario debe introducir el correo electrónico del contacto a añadir
+                while True:
+                    email = input("Email: ")
+                    if validate_email(email):  # Usar validate_email para verificar el formato
+                        break  # Salir del bucle si el formato es válido
+                    else:
+                        print("Formato de correo inválido. Inténtalo de nuevo.")
+
+                # El usuario debe introducir el celular del contacto a añadir
+                while True:
+                    try:
+                        celular = int(input("Celular: "))
+                        break
+                    except TypeError:
+                        print("Celular debe ser un número. Inténtalo de nuevo.")
+                    except ValueError:
+                        print("Celular debe ser un número entero. Inténtalo de nuevo.")
+
+                # El usuario debe introducir la carrera del contacto a añadir
+                while True:
+                    carrera = input("Carrera: ")
+                    if carrera.replace(" ", "").isalpha():  # Verificar si solo contiene letras y espacios
+                        break  # Salir del bucle si es válido
+                    else:
+                        print("Carrera inválida. Solo se permiten letras y espacios.")
+
+                if tipo == "Alumno":
+                    while True:
+                        try:
+                            num_cuenta = int(input("Número de cuenta: "))
+                            break
+                        except ValueError:
+                            print("Número de cuenta inválido. Debe ser un número entero.")
+                    while True:
+                        try:
+                            semestre = int(input("Semestre: "))
+                            break
+                        except ValueError:
+                            print("Semestre inválido. Debe ser un número entero.")
+                    materias = input("Materias: ")
+                    contacto = Alumno(nombre, apellidos, nacimiento, email, celular, carrera, num_cuenta, semestre,
+                                      materias)
+
+                elif tipo == "Profesor":
+                    while True:
+                        try:
+                            num_profesor = int(input("Número de profesor: "))
+                            break
+                        except ValueError:
+                            print("Número de profesor inválido. Debe ser un número entero.")
+                    departamento = input("Departamento: ")
+                    while True:
+                        try:
+                            salario = float(input("Salario: "))
+                            break
+                        except ValueError:
+                            print("Salario inválido. Debe ser un número.")
+                    while True:
+                        try:
+                            oficina = int(input("Teléfono de oficina: "))
+                            break
+                        except ValueError:
+                            print("Teléfono de oficina inválido. Debe ser un número entero.")
+                    grupos = input("Grupos: ")
+                    contacto = Profesor(nombre, apellidos, nacimiento, email, celular, carrera, num_profesor,
+                                        departamento, salario,
+                                        oficina, grupos)
+
+                elif tipo == "Coordinador":
+                    while True:
+                        try:
+                            num_coordinador = int(input("Número de coordinador: "))
+                            break
+                        except ValueError:
+                            print("Número de coordinador inválido. Debe ser un número entero.")
+                    departamento = input("Departamento: ")
+                    while True:
+                        try:
+                            extension = int(input("Extensión: "))
+                            break
+                        except ValueError:
+                            print("Extensión inválida. Debe ser un número entero.")
+                    while True:
+                        try:
+                            salario = float(input("Salario: "))
+                            break
+                        except ValueError:
+                            print("Salario inválido. Debe ser un número.")
+                    contacto = Coordinador(nombre, apellidos, nacimiento, email, celular, carrera, num_coordinador,
+                                           departamento,
+                                           extension, salario)
+                else:
+                    print("Tipo de contacto no válido.")
+                    continue  # Salir del bucle actual y volver al inicio del while True
+
+                # Agregar el contacto al Directorio (Asegurarse de que 'directorio' sea accesible)
+                directorio.agregar_contacto(contacto)
+                print("Contacto agregado exitosamente.")
+
+
+            elif opcion == "3":
+                nombre = input("Introduce el nombre del contacto a buscar: ")
+                apellidos = input("Introduce los apellidos del contacto a buscar: ")
+                resultados = directorio.buscar_contacto("nombre", nombre)
+                if not resultados.esta_vacia():
+                    for contacto in resultados:
+                        if contacto.apellidos == apellidos:
+                            print("Contacto encontrado:", contacto)
+                            break  # Salir del bucle si se encuentra
+                    else:  # Este else pertenece al bucle for, se ejecuta si no se encuentra en el bucle
+                        print("Contacto no encontrado (apellidos no coinciden).")
+                else:  # Este else pertenece al if principal, se ejecuta si la lista está vacía
+                    print("Contacto no encontrado.")
+
+            elif opcion == "4":
+                nombre = input("Introduce el nombre del contacto a buscar: ")
+                apellidos = input("Introduce los apellidos del contacto a buscar: ")
+                tipo_str = input("Introduce el tipo de contacto (Alumno/Profesor/Coordinador): ").capitalize()
+
+                # Convertir el tipo de str a la clase correspondiente
+                tipos_validos = {"Alumno": Alumno, "Profesor": Profesor, "Coordinador": Coordinador}
+                if tipo_str in tipos_validos:
+                    tipo = tipos_validos[tipo_str]
+                else:
+                    print("Tipo de contacto no válido.")
+                    continue  # Volver al menú principal
+
+                resultados = directorio.buscar_contacto("nombre", nombre)
+                if not resultados.esta_vacia():
+                    for contacto in resultados:
+                        if contacto.apellidos == apellidos and isinstance(contacto, tipo):  # Verificar apellidos y tipo
+                            print("Contacto encontrado:", contacto)
+                            break  # Salir del bucle si se encuentra
+                    else:  # Este else pertenece al bucle for, se ejecuta si no se encuentra en el bucle
+                        print("Contacto no encontrado (apellidos o tipo no coinciden).")
+                else:  # Este else pertenece al if principal, se ejecuta si la lista está vacía
+                    print("Contacto no encontrado.")
+
+            elif opcion == "5":
+                while True:
+                    try:
+                        celular = int(input("Introduce el número de celular a buscar: "))
+                        break
+                    except ValueError:
+                        print("Número de celular inválido. Debe ser un número entero.")
+                resultados = directorio.buscar_contacto("celular", celular)
+                if not resultados.esta_vacia():
+                    contacto = resultados.primero()  # Obtener el primer contacto de la lista
+                    print("Contacto encontrado:", contacto)  # Imprimir la información del contacto (objeto 'Persona')
+                else:
+                    print("Contacto no encontrado.")
+
+            elif opcion == "6":
+                tipo_str = input("Introduce el tipo de contacto (Alumno/Profesor/Coordinador): ").capitalize()
+
+                # Convertir el tipo de str a la clase correspondiente
+                tipos_validos = {"Alumno": Alumno, "Profesor": Profesor, "Coordinador": Coordinador}
+                if tipo_str in tipos_validos:
+                    tipo = tipos_validos[tipo_str]
+                else:
+                    print("Tipo de contacto no válido.")
+                    continue  # Volver al menú principal
+
+                while True:
+                    try:
+                        numero = int(input("Introduce el número a buscar: "))
+                        break
+                    except ValueError:
+                        print("Número inválido. Debe ser un número entero.")
+
+                resultados = directorio.buscar_contacto("numero", numero)
+                if not resultados.esta_vacia():
+                    for contacto in resultados:
+                        if isinstance(contacto, tipo):  # Verificar el tipo
+                            print("Contacto encontrado:", contacto)
+                            break  # Salir del bucle si se encuentra
+                    else:  # Este else pertenece al bucle for, se ejecuta si no se encuentra en el bucle
+                        print("Contacto no encontrado (tipo no coincide).")
+                else:  # Este else pertenece al if principal, se ejecuta si la lista está vacía
+                    print("Contacto no encontrado.")
+
+            elif opcion == "7":
+
+                # Verificar si hay contactos en el directorio
+                if directorio.contactos.esta_vacia():  # Usar esta_vacia() de la lista ligada
+                    print("No hay contactos en el directorio. Agrega contactos primero.")
+                    continue  # Volver al menú principal
+
+                nombre = input("Nombre del contacto a eliminar: ")
+                apellidos = input("Apellidos del contacto a eliminar: ")
+                if directorio.eliminar_contacto(nombre, apellidos):
+                    print("Contacto eliminado exitosamente.")
+                else:
+                    print("Contacto no encontrado.")
+
+            elif opcion == "8":
+
+                # Verificar si hay contactos en el directorio
+                if directorio.contactos.esta_vacia():  # Usar esta_vacia() de la lista ligada
+                    print("No hay contactos en el directorio. Agrega contactos primero.")
+                    continue  # Volver al menú principal
+
+                celular = int(input("Introduce el número de celular del contacto a eliminar: "))
+                if directorio.eliminar_por_celular(celular):
+                    print("Contacto eliminado exitosamente.")
+                else:
+                    print("Contacto no encontrado.")
+
+
+            elif opcion == "9":
+
+                # Verificar si hay contactos en el directorio
+                if directorio.contactos.esta_vacia():  # Usar esta_vacia() de la lista ligada
+                    print("No hay contactos en el directorio. Agrega contactos primero.")
+                    continue  # Volver al menú principal
+
+                tipo = input("Tipo de contacto (Alumno/Profesor/Coordinador): ")
+                if tipo == "Alumno":
+                    tipo = Alumno
+                    numero = int(input("Número de cuenta: "))
+                elif tipo == "Profesor":
+                    tipo = Profesor
+                    numero = int(input("Número de profesor: "))
+                elif tipo == "Coordinador":
+                    tipo = Coordinador
+                    numero = int(input("Número de coordinador: "))
+                else:
+                    print("Tipo de contacto no válido.")
+                    continue
+
+                if directorio.eliminar_por_numero(tipo, numero):
+                    print("Contacto eliminado exitosamente.")
+                else:
+                    print("Contacto no encontrado.")
+
+            elif opcion == "10":
+                archivo_csv = input("Nombre del archivo CSV a leer: ")
+                directorio.leer_archivo(archivo_csv)
+                print(archivo_csv)
+                print("Contactos leídos desde el archivo CSV.")
+
+
+            elif opcion == "11":
+
+                # Verificar si hay contactos en el directorio
+                if directorio.contactos.esta_vacia():  # Usar esta_vacia() de la lista ligada
+                    print("No hay contactos en el directorio. Agrega contactos primero.")
+                    continue  # Volver al menú principal
+
+                contactos = directorio.listar_contactos()
+                if contactos:
+                    print("Contactos:")
+                    for contacto in contactos:
+                        print(contacto)
+                else:
+                    print("No hay contactos en el directorio.")
+
+
+            elif opcion == "12":
+
+                # Verificar si hay contactos en el directorio
+                if directorio.contactos.esta_vacia():  # Usar esta_vacia() de la lista ligada
+                    print("No hay contactos en el directorio. Agrega contactos primero.")
+                    continue  # Volver al menú principal
+
+                directorio.listar_contactos_email()
+
+
+            elif opcion == "13":
+
+                # Verificar si hay contactos en el directorio
+                if directorio.contactos.esta_vacia():  # Usar esta_vacia() de la lista ligada
+                    print("No hay contactos en el directorio. Agrega contactos primero.")
+                    continue  # Volver al menú principal
+
+                carrera = input("Introduce la carrera a buscar: ")
+                directorio.listar_contactos_por_carrera(carrera)
+
+            elif opcion == "14":
+
+                # Verificar si hay contactos en el directorio
+                if directorio.contactos.esta_vacia():  # Usar esta_vacia() de la lista ligada
+                    print("No hay contactos en el directorio. Agrega contactos primero.")
+                    continue  # Volver al menú principal
+
+                salario = float(input("Introduce el salario a buscar: "))
+                profesores = []
+                coordinadores = []
+
+                for contacto in directorio.contactos.datos:
+
+                    if isinstance(contacto, Profesor) and contacto.salario == salario:
+                        profesores.append(contacto)
+
+                    elif isinstance(contacto, Coordinador) and contacto.salario == salario:
+                        coordinadores.append(contacto)
+
+                if profesores:
+                    print("Profesores con ese salario:")
+                    for profesor in profesores:
+                        print(profesor)
+
+                if coordinadores:
+                    print("Coordinadores con ese salario:")
+                    for coordinador in coordinadores:
+                        print(coordinador)
+
+                if not profesores and not coordinadores:
+                    print("No se encontraron contactos con ese salario.")
+
+            elif opcion == "15":
+
+                # Verificar si hay contactos en el directorio
+                if directorio.contactos.esta_vacia():  # Usar esta_vacia() de la lista ligada
+                    print("No hay contactos en el directorio. Agrega contactos primero.")
+                    continue  # Volver al menú principal
+
+                tipo = input("Tipo de contacto a listar (Alumno/Profesor/Coordinador): ")
+                if tipo == "Alumno":
+                    contactos = directorio.listar_por_tipo(Alumno)
+                elif tipo == "Profesor":
+                    contactos = directorio.listar_por_tipo(Profesor)
+                elif tipo == "Coordinador":
+                    contactos = directorio.listar_por_tipo(Coordinador)
+                else:
+                    print("Tipo de contacto no válido.")
+                    continue
+
+                if contactos:
+                    print(f"Contactos de tipo {tipo}:")
+                    for contacto in contactos:
+                        print(contacto)
+
+                else:
+                    print(f"No hay contactos de tipo {tipo} en el directorio.")
+
+            elif opcion == "16":
+
+                # Verificar si hay contactos en el directorio
+                if directorio.contactos.esta_vacia():  # Usar esta_vacia() de la lista ligada
+                    print("No hay contactos en el directorio. Agrega contactos primero.")
+                    continue  # Volver al menú principal
+
+                archivo_csv = input("Nombre del archivo CSV a guardar: ")
+                directorio.guardar_archivo(archivo_csv)
+                print("Contactos guardados en el archivo CSV.")
+
+            elif opcion == "17":
+                directorio.vaciar_directorio()
+
+            if opcion == "18":
+                # Guardar los datos automáticamente en el archivo "contactos.csv"
+                directorio.guardar_archivo("contactos.csv")
+                print("Datos guardados automáticamente en contactos.csv")
+
+            # Preguntar al usuario si desea volver al menú principal o salir
+            while True:
+                volver_al_menu = input("¿Desea volver al menú principal? (s/n): ")
+                if volver_al_menu.lower() in ('s', 'n'):
+                    break
+                else:
+                    print("Por favor, introduce 's' o 'n'")
+
+            if volver_al_menu.lower() == 'n':
+                print("Saliendo del programa. ¡Hasta luego! :D")
+                break  # Salir del bucle principal
+
+    except Exception as e:
+        print(f"Ocurrió un error: {e}")
